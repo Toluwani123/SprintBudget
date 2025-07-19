@@ -9,13 +9,14 @@ from .models import *
 import plaid
 from transactions.models import Transaction, Category
 from celery import shared_task
+from decouple import config
 
 
 configuration = Configuration(
     host= plaid.Environment.Sandbox,
     api_key={
-        "clientId": "65960b3fb0e7ae001b4cde28",
-        "secret": "bb9f4c50f9720f2565615c76805694",
+        "clientId": config("PLAID_CLIENT_ID"),
+        "secret": config("PLAID_SECRET"),
     }
 )
 

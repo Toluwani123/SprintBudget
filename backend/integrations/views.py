@@ -23,7 +23,7 @@ from rest_framework.views import APIView
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 
-
+from decouple import config
 
 User = get_user_model()
 
@@ -32,8 +32,8 @@ User = get_user_model()
 configuration = Configuration(
     host= plaid.Environment.Sandbox,
     api_key={
-        "clientId": "65960b3fb0e7ae001b4cde28",
-        "secret": "bb9f4c50f9720f2565615c76805694",
+        "clientId": config("PLAID_CLIENT_ID"),
+        "secret": config("PLAID_SECRET"),
     }
 )
 

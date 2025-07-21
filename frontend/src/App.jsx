@@ -6,6 +6,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Integrations from './pages/Integrations'
+import './App.css'
+import Dashboard from './pages/Dashboard'
 
 function Logout () {
   localStorage.clear();
@@ -20,6 +22,7 @@ function RegisterandLogout () {
 
 
 function App() {
+
   
 
   return (
@@ -33,6 +36,11 @@ function App() {
         <Route path="/integrations" element={
           <ProtectedRoute>
             <Integrations />
+          </ProtectedRoute>
+        } />
+        <Route path="/dashboard" element={
+          <ProtectedRoute>
+            <Dashboard />
           </ProtectedRoute>
         } />
 

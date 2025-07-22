@@ -8,6 +8,9 @@ import Register from './pages/Register'
 import Integrations from './pages/Integrations'
 import './App.css'
 import Dashboard from './pages/Dashboard'
+import Sprints from './pages/Sprints'
+import Transactions from './pages/Transactions'
+import Settings from './pages/Settings'
 
 function Logout () {
   localStorage.clear();
@@ -41,6 +44,21 @@ function App() {
         <Route path="/dashboard" element={
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/transactions" element={
+          <ProtectedRoute>
+            <Transactions />
+          </ProtectedRoute>
+        } />
+        <Route path="/sprints" element={
+          <ProtectedRoute>
+            <Sprints />
+          </ProtectedRoute>
+        } />
+        <Route path="/settings" element={
+          <ProtectedRoute>
+            <Settings />
           </ProtectedRoute>
         } />
 

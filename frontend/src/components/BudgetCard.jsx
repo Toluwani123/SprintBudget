@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Edit3, Save, X, Target, Calendar, TrendingUp } from 'lucide-react';
 
-export const BudgetCard = ({ budget, onUpdate }) => {
+export const BudgetCard = ({ budget, daysRemaining, health }) => {
   /* ---------- local state ---------- */
+  
   const [isEditing, setIsEditing] = useState(false);
   const [editValues, setEditValues] = useState({
     weeklyLimit: budget?.weeklyLimit ?? 520,
@@ -24,12 +25,7 @@ export const BudgetCard = ({ budget, onUpdate }) => {
   };
 
   /* ---------- helpers ---------- */
-  const getDaysUntilFriday = () => {
-    const today = new Date();
-    const day = today.getDay();               // 0-Sun … 5-Fri … 6-Sat
-    const diff = day <= 5 ? 5 - day : 7 - day + 5;
-    return diff === 0 ? 7 : diff;             // rollover next Friday
-  };
+  
 
   /* ---------- render ---------- */
   return (
@@ -40,7 +36,7 @@ export const BudgetCard = ({ budget, onUpdate }) => {
 
         {!isEditing ? (
           <button
-            onClick={() => setIsEditing(true)}
+            
             className="p-2 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
           >
             <Edit3 className="w-4 h-4" />
@@ -48,13 +44,13 @@ export const BudgetCard = ({ budget, onUpdate }) => {
         ) : (
           <div className="flex space-x-2">
             <button
-              onClick={handleSave}
+              
               className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
             >
               <Save className="w-4 h-4" />
             </button>
             <button
-              onClick={handleCancel}
+              
               className="p-2 text-gray-500 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <X className="w-4 h-4" />
@@ -71,20 +67,11 @@ export const BudgetCard = ({ budget, onUpdate }) => {
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-700">Weekly Limit</p>
 
-            {isEditing ? (
-              <input
-                type="number"
-                value={editValues.weeklyLimit}
-                onChange={(e) =>
-                  setEditValues({ ...editValues, weeklyLimit: parseFloat(e.target.value) })
-                }
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-emerald-500 focus:border-emerald-500"
-              />
-            ) : (
-              <p className="text-lg font-semibold text-gray-900">
-                ${Number(budget?.weeklyLimit ?? 500).toFixed(2)}
-              </p>
-            )}
+            
+            <p className="text-lg font-semibold text-gray-900">
+              ${Number(budget?.weeklyLimit ?? 500).toFixed(2)}
+            </p>
+           
           </div>
         </div>
 
@@ -94,7 +81,7 @@ export const BudgetCard = ({ budget, onUpdate }) => {
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-700">Days Until Rollover</p>
             <p className="text-lg font-semibold text-gray-900">
-              {getDaysUntilFriday()} days
+              {daysRemaining} days
             </p>
           </div>
         </div>
@@ -104,7 +91,7 @@ export const BudgetCard = ({ budget, onUpdate }) => {
           <TrendingUp className="w-5 h-5 text-orange-600" />
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-700">Budget Health</p>
-            <p className="text-lg font-semibold text-green-600">Healthy</p>
+            <p className="text-lg font-semibold text-green-600">{health >= 75 ? 'Poor' : health >= 50 ? 'Moderate' : 'Healthy'}</p>
           </div>
         </div>
       </div>

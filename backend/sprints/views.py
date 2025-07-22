@@ -6,7 +6,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta, date
 from .models import *
 from .serializers import *
-from .functions import create_sprint
+from .functions import create_sprint, get_last_spend_day_total, complete_expired_sprints
 
 
 # Create your views here.
@@ -86,6 +86,7 @@ class SprintAlertListView(generics.ListAPIView):
 def budget_dashboard(request):
     """Get comprehensive budget dashboard data"""
     user = request.user
+    complete_expired_sprints()
     today = date.today()
     
     # Current sprint
@@ -111,9 +112,16 @@ def budget_dashboard(request):
     recent_alerts = SprintAlert.objects.filter(user=user)[:5]
     recent_alerts_data = SprintAlertSerializer(recent_alerts, many=True).data
 
+    # Today's spending
+    last_spend_date, last_spend_total, _ = get_last_spend_day_total(user.id)
+
     return Response({
         'current_sprint': current_sprint_data,
         'recent_sprints': recent_sprints_data,
+        'last_spend_date': {
+            'date': last_spend_date,
+            'total': str(last_spend_total),
+        },
 
         'recent_alerts': recent_alerts_data,
     })

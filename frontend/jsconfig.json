@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",          // let JS/TS know “/” means the repo root
+    "paths": {
+      "@/*": ["src/*"]       // @/… → /src/…
+    }
+  },
+ 
+}

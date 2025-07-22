@@ -20,7 +20,7 @@ class SprintSerializer(serializers.ModelSerializer):
         total_sprint = obj.budget_amount + obj.rollover_amount
         if total_sprint == 0:
             return 0
-        return min(100, (obj.total_spent / total_sprint) * 100)
+        return float(min(100, (obj.total_spent / total_sprint) * 100))
         
 
 

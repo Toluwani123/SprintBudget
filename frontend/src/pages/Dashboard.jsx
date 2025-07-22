@@ -13,6 +13,7 @@ function Dashboard() {
     const [userData, setUserData] = useState(null);
     const [dashboardData, setDashboardData] = useState(null);
     const [transactionData, setTransactionData] = useState(null);
+    const [sprintData, setSprintData] = useState(null);
 
     const lastISO = dashboardData?.last_spend_date?.date;         // "YYYY-MM-DD"
     const todayISO = new Date().toISOString().slice(0, 10);       // also "YYYY-MM-DD"
@@ -27,8 +28,13 @@ function Dashboard() {
         const fetchData = async () => {
             try {
                 const response = await api.get('/accounts/profile/update/'); // Example endpoint
+                const dashboardResponse = await api.get('/sprints/dashboard/');
+                const userResponse = await api.get('/sprints/current/'); // Example endpoint for current sprint
+                setDashboardData(dashboardResponse.data);
                 setUserData(response.data);
+                setSprintData(userResponse.data);
                 console.log('User data:', response.data);
+                console.log("sprintData:", userResponse.data);
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             }
@@ -162,9 +168,14 @@ function Dashboard() {
             </div>
 
             <div>
-                <BudgetCard budget={{ weeklyLimit: userData?.weekly_budget }} onUpdate={handleBudgetUpdate} />
+                <BudgetCard
+                    budget={{ weeklyLimit: userData?.weekly_budget }}
+                    onUpdate={handleBudgetUpdate}
+                    daysRemaining={sprintData?.days_remaining}
+                    health={sprintData?.sprint_percentage}
+                />
             </div>
-            <div    >
+            <div className='lg:col-span-2'>
                 <TransactionList
                     transactions={transactionData?.latest_transactions ?? []}
                     title="Recent Transactions"

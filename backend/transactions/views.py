@@ -88,10 +88,14 @@ def transaction_stats(request):
         date__date__range=[week_start, week_end],
         transaction_type='expense'
     )
+
     
+
     total_spent = sum(t.amount for t in week_transactions)
-    transaction_count = week_transactions.count()
+
     
+    transaction_count = len(week_transactions)
+
     # Category breakdown
     category_stats = {}
     for transaction in week_transactions:
@@ -104,6 +108,8 @@ def transaction_stats(request):
             }
         category_stats[category_name]['amount'] += float(transaction.amount)
         category_stats[category_name]['count'] += 1
+
+    week_transactions = TransactionSerializer(week_transactions, many=True).data
     
     return Response({
         'week_start': week_start,
@@ -111,6 +117,7 @@ def transaction_stats(request):
         'total_spent': total_spent,
         'weekly_budget': user.weekly_budget,
         'remaining_budget': user.weekly_budget - total_spent,
+        'latest_transactions': week_transactions[:5],
         'transaction_count': transaction_count,
         'category_breakdown': category_stats,
         'budget_percentage': (total_spent / user.weekly_budget * 100) if user.weekly_budget > 0 else 0

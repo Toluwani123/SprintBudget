@@ -2,9 +2,14 @@ from celery import shared_task
 from django.contrib.auth import get_user_model
 from datetime import datetime, timedelta, date
 from .models import *
+from transactions.models import Transaction
 
 
 User = get_user_model()
+
+@shared_task(name="core.debug_hello")
+def debug_hello(who="world"):
+    return f"Hello, {who}!"
 
 
 @shared_task
@@ -101,3 +106,39 @@ def complete_expired_sprints():
             create_sprint.delay(sprint.user.id, float(sprint.remaining_budget))
         else:
             create_sprint.delay(sprint.user.id)
+
+from django.utils import timezone
+from django.conf import settings
+from django.db.models import Sum
+from decimal import Decimal
+import pytz 
+from datetime import timezone as dt_timezone
+
+def get_last_spend_day_total(user, tz=None, include_transactions=False):
+    if tz is None:
+        tz = getattr(settings, 'TIME_ZONE', 'UTC')
+        tz = pytz.timezone(tz)
+
+    latest_txn = Transaction.objects.filter(user=user).order_by('-date').first()
+
+    if not latest_txn:
+        return None, Decimal('0.00'), None
+    
+    latest_local= timezone.localtime(latest_txn.date, tz)
+    start_of_day = latest_local.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = start_of_day + timezone.timedelta(days=1)
+
+    start_of_day_utc = timezone.make_aware(start_of_day.replace(tzinfo=None), timezone=tz).astimezone(dt_timezone.utc)
+    end_of_day_utc = timezone.make_aware(end_of_day.replace(tzinfo=None), timezone=tz).astimezone(dt_timezone.utc)
+
+    day_txns = Transaction.objects.filter(
+        user=user,
+        transaction_type='expense',
+        date__gte=start_of_day_utc,
+        date__lt=end_of_day_utc
+    )
+
+    agg = day_txns.aggregate(total=Sum('amount'))
+    total_spent = agg['total'] or Decimal('0.00')
+
+    return start_of_day.date(), float(total_spent), (day_txns if include_transactions else None)

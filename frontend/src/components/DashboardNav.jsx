@@ -53,9 +53,11 @@ function DashboardNav({ userData }) {
                         </div>
                         
                         <div className="flex items-center space-x-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
-                                <CiLogout className="w-4 h-4 text-white" />
-                            </div>
+                            <a href="/logout" className="flex items-center space-x-2">
+                                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-full flex items-center justify-center">
+                                    <CiLogout className="w-4 h-4 text-white" />
+                                </div>
+                            </a>
                         </div>
 
                     </div>

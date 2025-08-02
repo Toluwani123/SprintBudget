@@ -8,6 +8,7 @@ import { BsCalendar2WeekFill } from "react-icons/bs";
 import { SpendingGauge } from '../components/SpendingGuage';
 import { BudgetCard } from '../components/BudgetCard';
 import { TransactionList } from '../components/TransactionList';
+import { FaArrowTrendUp } from "react-icons/fa6";
 
 function Dashboard() {
     const [userData, setUserData] = useState(null);
@@ -136,22 +137,34 @@ function Dashboard() {
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <div className="flex items-center justify-between">
                     <div>
-                    <p className="text-sm font-medium text-gray-500">Daily Average</p>
-                    <p className="text-2xl font-bold text-gray-900">
-                        ${
-                            (() => {
-                            const sprint   = dashboardData?.current_sprint ?? {};
-                            const remain   = Number(sprint.remaining_budget ?? 0);
-                            const daysLeft = Number(sprint.days_remaining  ?? 0);
+                        <p className="text-sm font-medium text-gray-500">Daily Average</p>
+                        <p className="text-2xl font-bold text-gray-900">
+                            ${
+                                (() => {
+                                const sprint   = dashboardData?.current_sprint ?? {};
+                                const remain   = Number(sprint.remaining_budget ?? 0);
+                                const daysLeft = Number(sprint.days_remaining  ?? 0);
 
-                            // If no days left (≤ 0) just show the remaining budget,
-                            // otherwise show the per-day allowance.
-                            return (daysLeft > 0 ? remain / daysLeft : remain).toFixed(2);
-                            })()
-                        }
-                    </p>
+                                // If no days left (≤ 0) just show the remaining budget,
+                                // otherwise show the per-day allowance.
+                                return (daysLeft > 0 ? remain / daysLeft : remain).toFixed(2);
+                                })()
+                            }
+                        </p>
                     </div>
-                    <PiTrendDownDuotone className="w-8 h-8 text-orange-600" />
+                    {(()=>{
+                        const sprint   = dashboardData?.current_sprint ?? {};
+                        const remain   = Number(sprint.remaining_budget ?? 0);
+                        const daysLeft = Number(sprint.days_remaining  ?? 0);
+                        const dailyAverage = daysLeft > 0 ? remain / daysLeft : remain;
+                        
+                        return dailyAverage > 100 ? (
+                            <FaArrowTrendUp className="w-8 h-8 text-green-600" />
+                        ) : (
+                            <PiTrendDownDuotone className="w-8 h-8 text-orange-600" />
+                        );
+
+                    })()}
                 </div>
             </div>
             

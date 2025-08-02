@@ -9,6 +9,7 @@ import {Currency, ShortDate} from '../utils'
 import { FaPlus } from "react-icons/fa6";
 import { LuCalendar } from "react-icons/lu";
 import { FaArrowRightLong } from "react-icons/fa6";
+import SprintInfo from '@/components/SprintInfo'
 
 
 function Sprints() {
@@ -16,6 +17,13 @@ function Sprints() {
     const [sprints, setSprints] = useState([]);
     const [currentSprint, setCurrentSprint] = useState(null);
     const [sprintAlerts, setSprintAlerts] = useState([]);
+    const [selectedSprint, setSelectedSprint] = useState(null);
+    const [isSprintInfoOpen, setIsSprintInfoOpen] = useState(false);
+
+    const handleSprintClick = (sprint) => {
+        setSelectedSprint(sprint);
+        setIsSprintInfoOpen(true);
+    };
 
     const fetchSprints = async () => {
         try {
@@ -107,7 +115,7 @@ function Sprints() {
                 <p className="text-muted-foreground">Manage your weekly budget sprints</p>
             </div>
             <div className="flex items-center gap-2">
-                <Button size="sm" className="h-9">
+                <Button size="sm" className="h-9" disabled>
                     <FaPlus className="mr-2 h-4 w-4" />
                     New Sprint
                 </Button>
@@ -211,11 +219,11 @@ function Sprints() {
                         <TableCell><Currency amount={sprint.remaining_budget} /></TableCell>
                         <TableCell>{getStatusBadge(sprint.is_active, sprint.id)}</TableCell>
                         <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" asChild>
-                            <a href={`/dashboard/sprints/${sprint.id}`}>
+                        <Button variant="ghost" size="sm" onClick={() => handleSprintClick(sprint)}>
+                            
                             View
                             <FaArrowRightLong className="ml-1 h-4 w-4" />
-                            </a>
+                          
                         </Button>
                         </TableCell>
                     </TableRow>
@@ -223,7 +231,11 @@ function Sprints() {
             </TableBody>
             </Table>
         </div>
-
+        <SprintInfo
+            isOpen={isSprintInfoOpen}
+            onClose={() => setIsSprintInfoOpen(false)}
+            sprint={selectedSprint}
+        />
 
     </div>
   )

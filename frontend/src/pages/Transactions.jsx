@@ -12,6 +12,7 @@ import {Select, SelectTrigger, SelectValue, SelectContent, SelectItem} from '@/c
 import {Table, TableHeader, TableBody, TableRow, TableCell, TableHead} from '@/components/ui/table';
 import {Badge} from '@/components/ui/badge';
 import DashboardNav from '@/components/DashboardNav';
+import AddTransaction from '@/components/AddTransaction';
 
 
 
@@ -21,6 +22,20 @@ function Transactions() {
     const [categories, setCategories] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('');
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    const handleAddTransaction = async (transactionDate) =>{
+        try {
+            const response = await api.post('/transactions/', transactionDate);
+            setTransactions([...transactions, response.data]);
+            
+            alert('Transaction added successfully!');
+        }
+        catch (error) {
+            console.error('Error adding transaction:', error);
+            throw error;
+        }
+    }
 
     const filteredTransactions = transactions.filter(transaction => {
         const matchesSearch = transaction.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -95,12 +110,13 @@ function Transactions() {
                     </p>
                 </div>
                 <div className='flex items-center gap-2'>
-                    <Button variant="outline" size="sm" className="h-9 bg-transparent">
+                    <Button variant="outline" size="sm" className="h-9 bg-transparent" disabled>
                         <FaFileDownload className='mr-2 h-4 w-4' />
+                     
                         Export Transactions
 
                     </Button>
-                    <Button size="sm" className="h-9">
+                    <Button size="sm" className="h-9" onClick={() => setIsAddModalOpen(true)}>
                         <IoMdAddCircleOutline className='mr-2 h-4 w-4' />
                         Add Transactions
                     </Button>
@@ -167,6 +183,11 @@ function Transactions() {
                     </TableBody>
                 </Table>
             </div>
+            <AddTransaction
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onSubmit={handleAddTransaction}
+            />
 
         </div>
     )

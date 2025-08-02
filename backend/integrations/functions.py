@@ -40,7 +40,7 @@ def sync_plaid_transactions(integration_id):
     try:
         response = client.transactions_get(request)
         transactions = response.to_dict().get('transactions', [])
-        print(transactions[0] if transactions else "No transactions found")
+        
 
         new_transactions = 0
         existing_transactions = 0
